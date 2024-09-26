@@ -1,9 +1,10 @@
+//ANGIE MELISSA SANTIAGO RODRIGUEZ
 class Order {
     constructor(
         public company: string,
         public quantity: number,
         public price: number,
-        public type: 'buy' | 'sell'  
+        public type: "buy" | "sell"
     ) {}
 }
 
@@ -152,10 +153,12 @@ class StockMarketSimulator {
     }
 
     public AddOrder(order: Order): void {
-        if (order.type === 'buy') {
+        if (order.type === "buy") {
             this.buyOrders.Insert(order);
+            this.LogTransaction(order.company, order.quantity, order.price, "buy");
         } else {
             this.sellOrders.Insert(order);
+            this.LogTransaction(order.company, order.quantity, order.price, "sell");
         }
         this.MatchOrders();
     }
@@ -171,7 +174,7 @@ class StockMarketSimulator {
                 highestBuyOrder.quantity -= quantityMatched;
                 lowestSellOrder.quantity -= quantityMatched;
 
-                this.LogTransaction(highestBuyOrder.company, quantityMatched, lowestSellOrder.price);
+                this.LogTransaction(highestBuyOrder.company, quantityMatched, lowestSellOrder.price, "match");
                 if (highestBuyOrder.quantity === 0) {
                     this.buyOrders.GetMax();
                 }
@@ -184,17 +187,18 @@ class StockMarketSimulator {
         }
     }
 
-    private LogTransaction(company: string, quantity: number, price: number): void {
-        let transaction = `Compañía: ${company}, Acciones: ${quantity}, Precio: ${price}`;
+    private LogTransaction(company: string, quantity: number, price: number, type: string): void {
+        let transactionType = type === "buy" ? "Orden de Compra" : type === "sell" ? "Orden de Venta" : "Transacción Coincidente";
+        let transaction = `${transactionType} - Compañía: ${company}, Acciones: ${quantity}, Precio: ${price}`;
         this.transactionHistory.push(transaction);
     }
 
     public ShowTransactionHistory(): void {
-        console.log('Historial de Transacciones:', this.transactionHistory);
+        console.log("Historial de Transacciones:", this.transactionHistory);
     }
 }
 
-
 const simulator = new StockMarketSimulator();
-simulator.AddOrder(new Order('Apple', 50, 140, 'sell')); 
+simulator.AddOrder(new Order("Apple", 100, 150, "buy"));
+simulator.AddOrder(new Order("Apple", 10, 140, "buy"));
 simulator.ShowTransactionHistory();
