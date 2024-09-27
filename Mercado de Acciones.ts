@@ -1,4 +1,4 @@
-// ANGIE MELISSA SANTIAGO RODRIGUEZ
+//ANGIE MELISSA SANTIAGO RODRIGUEZ
 class Order {
     constructor(
         public company: string,
@@ -145,7 +145,7 @@ class MinHeap {
 class StockMarketSimulator {
     private buyOrders: MaxHeap;
     private sellOrders: MinHeap;
-    private transactionHistory: { company: string; quantity: number; price: number; total: number }[] = [];
+    private transactionHistory: { company: string; quantity: number; price: number; total: number; type: string }[] = [];
 
     constructor() {
         this.buyOrders = new MaxHeap(10);
@@ -155,11 +155,10 @@ class StockMarketSimulator {
     public AddOrder(order: Order): void {
         if (order.type === "buy") {
             this.buyOrders.Insert(order);
-            this.LogTransaction(order.company, order.quantity, order.price, "buy");
         } else {
             this.sellOrders.Insert(order);
-            this.LogTransaction(order.company, order.quantity, order.price, "sell");
         }
+        this.LogTransaction(order.company, order.quantity, order.price, order.type);
         this.MatchOrders();
     }
 
@@ -168,13 +167,14 @@ class StockMarketSimulator {
             let highestBuyOrder = this.buyOrders.CheckMax();
             let lowestSellOrder = this.sellOrders.CheckMin();
 
-            if (highestBuyOrder.price >= lowestSellOrder.price) {
+            if (highestBuyOrder.price >= lowestSellOrder.price && highestBuyOrder.company === lowestSellOrder.company) {
                 let quantityMatched = Math.min(highestBuyOrder.quantity, lowestSellOrder.quantity);
 
                 highestBuyOrder.quantity -= quantityMatched;
                 lowestSellOrder.quantity -= quantityMatched;
 
                 this.LogTransaction(highestBuyOrder.company, quantityMatched, lowestSellOrder.price, "match");
+
                 if (highestBuyOrder.quantity === 0) {
                     this.buyOrders.GetMax();
                 }
@@ -189,44 +189,67 @@ class StockMarketSimulator {
 
     private LogTransaction(company: string, quantity: number, price: number, type: string): void {
         let total = quantity * price;
-        this.transactionHistory.push({ company, quantity, price, total });
+        this.transactionHistory.push({ company, quantity, price, total, type });
     }
 
     public ShowTransactionHistory(): void {
-        console.log("\n--------- MERCADO DE ACCIONES ---------")
+        console.log("\n-------------- MERCADO DE ACCIONES --------------");
         console.log("\nHISTORIAL DE TRANSACCIONES");
         this.transactionHistory.forEach(transaction => {
             console.log(`\nCompañía: ${transaction.company}`);
-            console.log(`Acciones Compradas: ${transaction.quantity}`);
-            console.log(`Precio de la Acción: ${transaction.price}`);
-            console.log(`Total Invertido: ${transaction.total.toFixed(2)}`);
-            
+            console.log(`Acciones: ${transaction.quantity}`);
+            console.log(`Precio: ${transaction.price}`);
+            console.log(`Total: ${transaction.total.toFixed(2)}`);
         });
 
         this.ShowOrderedTransactions();
     }
-    
+
     private ShowOrderedTransactions(): void {
-        let sortedTransactionsDesc = [...this.transactionHistory].sort((a, b) => b.total - a.total);
-        console.log("\n-----------------------------------------------")
-        console.log("\nTRANSACCIONES ORDENADAS DE MAYOR A MENOR");
-        sortedTransactionsDesc.forEach(transaction => {
+        let buyTransactions = this.transactionHistory.filter(t => t.type === "buy");
+        let sellTransactions = this.transactionHistory.filter(t => t.type === "sell");
+
+        let sortedBuysDesc = [...buyTransactions].sort((a, b) => b.total - a.total);
+        let sortedSellsDesc = [...sellTransactions].sort((a, b) => b.total - a.total);
+
+        let sortedBuysAsc = [...buyTransactions].sort((a, b) => a.total - b.total);
+        let sortedSellsAsc = [...sellTransactions].sort((a, b) => a.total - b.total);
+
+        console.log("\n-----------------------------------------------------");
+        console.log("\nTRANSACCIONES DE COMPRAS ORDENADAS DE MAYOR A MENOR");
+        sortedBuysDesc.forEach(transaction => {
             console.log(`\nCompañía: ${transaction.company}`);
             console.log(`Acciones Compradas: ${transaction.quantity}`);
             console.log(`Precio de la Acción: ${transaction.price}`);
             console.log(`Total Invertido: ${transaction.total.toFixed(2)}`);
-            
         });
 
-        let sortedTransactionsAsc = [...this.transactionHistory].sort((a, b) => a.total - b.total);
-        console.log("\n-----------------------------------------------")
-        console.log("\nTRANSACCIONES ORDENADAS DE MENOR A MAYOR");
-        sortedTransactionsAsc.forEach(transaction => {
+
+        console.log("\n-----------------------------------------------------");
+        console.log("\nTRANSACCIONES DE COMPRAS ORDENADAS DE MENOR A MAYOR");
+        sortedBuysAsc.forEach(transaction => {
             console.log(`\nCompañía: ${transaction.company}`);
             console.log(`Acciones Compradas: ${transaction.quantity}`);
             console.log(`Precio de la Acción: ${transaction.price}`);
             console.log(`Total Invertido: ${transaction.total.toFixed(2)}`);
-            
+        });
+
+        console.log("\n--------------------------------------------------");
+        console.log("\nTRANSACCIONES DE VENTAS ORDENADAS DE MAYOR A MENOR");
+        sortedSellsDesc.forEach(transaction => {
+            console.log(`\nCompañía: ${transaction.company}`);
+            console.log(`Acciones Vendidas: ${transaction.quantity}`);
+            console.log(`Precio de la Acción: ${transaction.price}`);
+            console.log(`Total Ganado: ${transaction.total.toFixed(2)}`);
+        });
+
+        console.log("\n--------------------------------------------------");
+        console.log("\nTRANSACCIONES DE VENTAS ORDENADAS DE MENOR A MAYOR");
+        sortedSellsAsc.forEach(transaction => {
+            console.log(`\nCompañía: ${transaction.company}`);
+            console.log(`Acciones Vendidas: ${transaction.quantity}`);
+            console.log(`Precio de la Acción: ${transaction.price}`);
+            console.log(`Total Ganado: ${transaction.total.toFixed(2)}`);
         });
     }
 }
@@ -234,12 +257,12 @@ class StockMarketSimulator {
 const simulator = new StockMarketSimulator();
 //COMPRAR ACCIONES
 simulator.AddOrder(new Order("Apple", 50, 227.50, "buy"));
-simulator.AddOrder(new Order ("Microsoft", 30, 431.30, "buy"))
-simulator.AddOrder(new Order ("Activision", 12, 94.40, "buy"))
-simulator.AddOrder(new Order ("Alphabet", 15, 163.80, "buy"))
-simulator.AddOrder(new Order ("Meta Platforms", 52, 567.80, "buy"))
+simulator.AddOrder(new Order("Microsoft", 30, 431.30, "buy"));
+simulator.AddOrder(new Order("Activision", 12, 94.40, "buy"));
+simulator.AddOrder(new Order("Alphabet", 15, 163.80, "buy"));
+simulator.AddOrder(new Order("Meta Platforms", 52, 567.80, "buy"));
 
-// VENDER ACCIONES
+//VENDER ACCIONES
 simulator.AddOrder(new Order("Apple", 40, 250.00, "sell"));
-
 simulator.ShowTransactionHistory();
+
