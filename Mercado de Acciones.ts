@@ -1,4 +1,4 @@
-//ANGIE MELISSA SANTIAGO RODRIGUEZ
+// ANGIE MELISSA SANTIAGO RODRIGUEZ
 class Order {
     constructor(
         public company: string,
@@ -145,7 +145,7 @@ class MinHeap {
 class StockMarketSimulator {
     private buyOrders: MaxHeap;
     private sellOrders: MinHeap;
-    private transactionHistory: string[] = [];
+    private transactionHistory: { company: string; quantity: number; price: number; total: number }[] = [];
 
     constructor() {
         this.buyOrders = new MaxHeap(10);
@@ -188,17 +188,58 @@ class StockMarketSimulator {
     }
 
     private LogTransaction(company: string, quantity: number, price: number, type: string): void {
-        let transactionType = type === "buy" ? "Orden de Compra" : type === "sell" ? "Orden de Venta" : "Transacción Coincidente";
-        let transaction = `${transactionType} - Compañía: ${company}, Acciones: ${quantity}, Precio: ${price}`;
-        this.transactionHistory.push(transaction);
+        let total = quantity * price;
+        this.transactionHistory.push({ company, quantity, price, total });
     }
 
     public ShowTransactionHistory(): void {
-        console.log("Historial de Transacciones:", this.transactionHistory);
+        console.log("\n--------- MERCADO DE ACCIONES ---------")
+        console.log("\nHISTORIAL DE TRANSACCIONES");
+        this.transactionHistory.forEach(transaction => {
+            console.log(`\nCompañía: ${transaction.company}`);
+            console.log(`Acciones Compradas: ${transaction.quantity}`);
+            console.log(`Precio de la Acción: ${transaction.price}`);
+            console.log(`Total Invertido: ${transaction.total.toFixed(2)}`);
+            
+        });
+
+        this.ShowOrderedTransactions();
+    }
+    
+    private ShowOrderedTransactions(): void {
+        let sortedTransactionsDesc = [...this.transactionHistory].sort((a, b) => b.total - a.total);
+        console.log("\n-----------------------------------------------")
+        console.log("\nTRANSACCIONES ORDENADAS DE MAYOR A MENOR");
+        sortedTransactionsDesc.forEach(transaction => {
+            console.log(`\nCompañía: ${transaction.company}`);
+            console.log(`Acciones Compradas: ${transaction.quantity}`);
+            console.log(`Precio de la Acción: ${transaction.price}`);
+            console.log(`Total Invertido: ${transaction.total.toFixed(2)}`);
+            
+        });
+
+        let sortedTransactionsAsc = [...this.transactionHistory].sort((a, b) => a.total - b.total);
+        console.log("\n-----------------------------------------------")
+        console.log("\nTRANSACCIONES ORDENADAS DE MENOR A MAYOR");
+        sortedTransactionsAsc.forEach(transaction => {
+            console.log(`\nCompañía: ${transaction.company}`);
+            console.log(`Acciones Compradas: ${transaction.quantity}`);
+            console.log(`Precio de la Acción: ${transaction.price}`);
+            console.log(`Total Invertido: ${transaction.total.toFixed(2)}`);
+            
+        });
     }
 }
 
 const simulator = new StockMarketSimulator();
-simulator.AddOrder(new Order("Apple", 100, 150, "buy"));
-simulator.AddOrder(new Order("Apple", 10, 140, "buy"));
+//COMPRAR ACCIONES
+simulator.AddOrder(new Order("Apple", 50, 227.50, "buy"));
+simulator.AddOrder(new Order ("Microsoft", 30, 431.30, "buy"))
+simulator.AddOrder(new Order ("Activision", 12, 94.40, "buy"))
+simulator.AddOrder(new Order ("Alphabet", 15, 163.80, "buy"))
+simulator.AddOrder(new Order ("Meta Platforms", 52, 567.80, "buy"))
+
+// VENDER ACCIONES
+simulator.AddOrder(new Order("Apple", 40, 250.00, "sell"));
+
 simulator.ShowTransactionHistory();
