@@ -224,15 +224,15 @@ class StockMarketSimulator {
             console.log(`Total Invertido: ${transaction.total.toFixed(2)}`);
         });
 
-
-        console.log("\n-----------------------------------------------------");
+        //QUITAR COMENTARIOS SI DESEA VER LAS COMPRAS ORDENADAS DE MENOR A MAYOR
+        /*console.log("\n-----------------------------------------------------");
         console.log("\nTRANSACCIONES DE COMPRAS ORDENADAS DE MENOR A MAYOR");
         sortedBuysAsc.forEach(transaction => {
             console.log(`\nCompañía: ${transaction.company}`);
             console.log(`Acciones Compradas: ${transaction.quantity}`);
             console.log(`Precio de la Acción: ${transaction.price}`);
             console.log(`Total Invertido: ${transaction.total.toFixed(2)}`);
-        });
+        });*/
 
         console.log("\n--------------------------------------------------");
         console.log("\nTRANSACCIONES DE VENTAS ORDENADAS DE MAYOR A MENOR");
@@ -243,14 +243,15 @@ class StockMarketSimulator {
             console.log(`Total Ganado: ${transaction.total.toFixed(2)}`);
         });
 
-        console.log("\n--------------------------------------------------");
+        //QUITAR COMENTARIOS SI DESEA VER LAS VENTAS ORDENADAS DE MENOR A MAYOR
+        /*console.log("\n--------------------------------------------------");
         console.log("\nTRANSACCIONES DE VENTAS ORDENADAS DE MENOR A MAYOR");
         sortedSellsAsc.forEach(transaction => {
             console.log(`\nCompañía: ${transaction.company}`);
             console.log(`Acciones Vendidas: ${transaction.quantity}`);
             console.log(`Precio de la Acción: ${transaction.price}`);
             console.log(`Total Ganado: ${transaction.total.toFixed(2)}`);
-        });
+        });*/
     }
 }
 
@@ -266,3 +267,6 @@ simulator.AddOrder(new Order("Meta Platforms", 52, 567.80, "buy"));
 simulator.AddOrder(new Order("Apple", 40, 250.00, "sell"));
 simulator.ShowTransactionHistory();
 
+//AGREGAR CON EL MAX Y MIN HEAP EN UN APARTADO DIFERENTE CUAL ES LA VENTA MAYOR Y CUAL ES LA VENTA MENOR
+//CORREGIR EXCEPCIONES
+//AGREGAR MI PORTAFOLIO DE INVERSIONES PARA VER CUANTAS ACCIONES TENGO Y CUANTO DINERO HE GANADO
