@@ -18,18 +18,22 @@ class MaxHeap {
         this.n = 0;
     }
 
+    //OBTIENE EL ELEMENTO MAXIMO DEL MONTICULO
     public CheckMax(): Order {
         return this.heap[1];
     }
 
+    //VERIFICA SI EL MONTICULO ESTA VACIO
     public Empty(): boolean {
         return this.n === 0;
     }
 
+    //DEVUELVE LA CANTIDAD DE ELEMENTOS DEL MONTICULO
     public GetQuantity(): number {
         return this.n;
     }
 
+    //INSERTA UN ELEMENTO EN EL MONTICULO
     public Insert(value: Order): void {
         if (this.n === this.heap.length - 1) {
             this.Resize(2 * this.heap.length);
@@ -39,6 +43,7 @@ class MaxHeap {
         this.BubbleUp(this.n);
     }
 
+    //ORDENA EL ELEMENTO HACIA ARRIBA SEGUN SU PRIORIDAD
     private BubbleUp(i: number): void {
         let parent = Math.floor(i / 2);
         while (i > 1 && this.heap[parent].price < this.heap[i].price) {
@@ -48,6 +53,7 @@ class MaxHeap {
         }
     }
 
+    //OBTIENE EL VALOR MAXIMO DEL MONTICULO Y LO ELIMINA
     public GetMax(): Order {
         let max = this.heap[1];
         this.heap[1] = this.heap[this.n];
@@ -57,6 +63,7 @@ class MaxHeap {
         return max;
     }
 
+    //ORDENA EL ELEMENTO HACIA ABAJO SEGUN SU PRIORIDAD
     private Sink(i: number): void {
         while (2 * i <= this.n) {
             let j = 2 * i;
@@ -67,6 +74,7 @@ class MaxHeap {
         }
     }
 
+    //REDIMENSIONA EL ARREGLO
     private Resize(newSize: number): void {
         let newHeap = new Array(newSize);
         for (let i = 1; i <= this.n; i++) {
@@ -85,18 +93,22 @@ class MinHeap {
         this.n = 0;
     }
 
+    //OBTIENE EL ELEMENTO MINIMO DEL MONTICULO
     public CheckMin(): Order {
         return this.heap[1];
     }
 
+    //VERIFICA SI EL MONTICULO ESTA VACIO
     public Empty(): boolean {
         return this.n === 0;
     }
 
+    //DEVUELVE LA CANTIDAD DE ELEMENTOS DEL MONTICULO
     public GetQuantity(): number {
         return this.n;
     }
 
+    //INSERTA UN ELEMENTO EN EL MONTICULO 
     public Insert(value: Order): void {
         if (this.n === this.heap.length - 1) {
             this.Resize(2 * this.heap.length);
@@ -106,6 +118,7 @@ class MinHeap {
         this.BubbleUp(this.n);
     }
 
+    //ORDENA EL ELEMENTO HACIA ARRIBA SEGUN SU PRIORIDAD
     private BubbleUp(i: number): void {
         let parent = Math.floor(i / 2);
         while (i > 1 && this.heap[parent].price > this.heap[i].price) {
@@ -115,6 +128,7 @@ class MinHeap {
         }
     }
 
+    //OBTIENE EL ELEMENTO MINIMO DEL MONTICULO Y LO ELIMINA
     public GetMin(): Order {
         let min = this.heap[1];
         this.heap[1] = this.heap[this.n];
@@ -124,6 +138,7 @@ class MinHeap {
         return min;
     }
 
+    //ORDENA EL ELEMENTO HACIA ABAJO SEGUN SU PRIORIDAD
     private Sink(i: number): void {
         while (2 * i <= this.n) {
             let j = 2 * i;
@@ -134,6 +149,7 @@ class MinHeap {
         }
     }
 
+    //REDIMENSIONA EL ARREGLO
     private Resize(newSize: number): void {
         let newHeap = new Array(newSize);
         for (let i = 1; i <= this.n; i++) {
@@ -153,6 +169,7 @@ class StockMarketSimulator {
         this.sellOrders = new MinHeap(10);
     }
 
+    //AGREGA UNA ORDEN 
     public AddOrder(order: Order): void {
         if (order.type === "buy") {
             this.buyOrders.Insert(order);
@@ -163,6 +180,7 @@ class StockMarketSimulator {
         this.MatchOrders();
     }
 
+    //HACE MATCH ENTRE LAS ORDENES DE COMPRA Y VENTA
     private MatchOrders(): void {
         while (!this.buyOrders.Empty() && !this.sellOrders.Empty()) {
             let highestBuyOrder = this.buyOrders.CheckMax();
@@ -188,11 +206,13 @@ class StockMarketSimulator {
         }
     }
 
+    //AGREGA UNA TRANSACCION EN EL HISTORIAL
     private LogTransaction(company: string, quantity: number, price: number, type: string): void {
         let total = quantity * price;
         this.transactionHistory.push({ company, quantity, price, total, type });
     }
 
+    //MUESTRA EL HISTORIAL DE TRANSACCIONES
     public ShowTransactionHistory(): void {
         console.log("\n-------------- MERCADO DE ACCIONES --------------");
         console.log("\nHISTORIAL DE TRANSACCIONES");
@@ -206,6 +226,7 @@ class StockMarketSimulator {
         this.ShowOrderedTransactions();
     }
 
+    //MOSTRAR LAS TRANSACCIONES ORDENADAS DE DIFERENTES MANERAS
     private ShowOrderedTransactions(): void {
         let buyTransactions = this.transactionHistory.filter(t => t.type === "buy");
         let sellTransactions = this.transactionHistory.filter(t => t.type === "sell");
@@ -216,6 +237,7 @@ class StockMarketSimulator {
         let sortedBuysAsc = [...buyTransactions].sort((a, b) => a.total - b.total);
         let sortedSellsAsc = [...sellTransactions].sort((a, b) => a.total - b.total);
 
+        //TRANSACCIONES DE COMPRA ORDENADAS DE MAYOR A MENOR
         console.log("\n-----------------------------------------------------");
         console.log("\nTRANSACCIONES DE COMPRAS ORDENADAS DE MAYOR A MENOR");
         sortedBuysDesc.forEach(transaction => {
@@ -226,6 +248,7 @@ class StockMarketSimulator {
         });
 
         //QUITAR COMENTARIOS SI DESEA VER LAS COMPRAS ORDENADAS DE MENOR A MAYOR
+        //TRANSACCIONES DE COMPRA ORDENADAS DE MENOR A MAYOT
         /*console.log("\n-----------------------------------------------------");
         console.log("\nTRANSACCIONES DE COMPRAS ORDENADAS DE MENOR A MAYOR");
         sortedBuysAsc.forEach(transaction => {
@@ -235,6 +258,7 @@ class StockMarketSimulator {
             console.log(`Total Invertido: ${transaction.total.toFixed(2)}`);
         });*/
 
+        //TRANSACCIONES DE VENTA ORDENADAS DE MAYOR A MENOR
         console.log("\n--------------------------------------------------");
         console.log("\nTRANSACCIONES DE VENTAS ORDENADAS DE MAYOR A MENOR");
         sortedSellsDesc.forEach(transaction => {
@@ -245,6 +269,7 @@ class StockMarketSimulator {
         });
 
         //QUITAR COMENTARIOS SI DESEA VER LAS VENTAS ORDENADAS DE MENOR A MAYOR
+        //TRANSACCIONES DE VENTA ORDENADAS DE MENOR A MAYOR
         /*console.log("\n--------------------------------------------------");
         console.log("\nTRANSACCIONES DE VENTAS ORDENADAS DE MENOR A MAYOR");
         sortedSellsAsc.forEach(transaction => {
@@ -253,6 +278,35 @@ class StockMarketSimulator {
             console.log(`Precio de la Acción: ${transaction.price}`);
             console.log(`Total Ganado: ${transaction.total.toFixed(2)}`);
         });*/
+    }
+
+    //MOSTRAR COMPRA Y VENTA MAYOR USANDO MONTICULOS
+    public MostrarCompraMayor(): void {
+        let maxHeap = new MaxHeap(this.buyOrders.GetQuantity());
+        this.transactionHistory.filter(t => t.type === "buy").forEach(transaction => {
+            maxHeap.Insert(new Order(transaction.company, transaction.quantity, transaction.price, "buy"));
+        });
+
+        let maxCompra = maxHeap.GetMax();
+        console.log("\n--------------------------------------------------");
+        console.log("\nCOMPRA MAYOR");
+        console.log(`\nCompañía: ${maxCompra.company}`);
+        console.log(`Acciones: ${maxCompra.quantity}`);
+        console.log(`Precio: ${maxCompra.price}`);
+    }
+
+    public MostrarCompraMenor(): void {
+        let minHeap = new MinHeap(this.buyOrders.GetQuantity());
+        this.transactionHistory.filter(t => t.type === "buy").forEach(transaction => {
+            minHeap.Insert(new Order(transaction.company, transaction.quantity, transaction.price, "buy"));
+        });
+
+        let minCompra = minHeap.GetMin();
+        console.log("\n--------------------------------------------------");
+        console.log("\nCOMPRA MENOR");
+        console.log(`\nCompañía: ${minCompra.company}`);
+        console.log(`Acciones: ${minCompra.quantity}`);
+        console.log(`Precio: ${minCompra.price}`);
     }
 
     public MostrarVentaMayor(): void {
@@ -295,13 +349,17 @@ simulator.AddOrder(new Order("Meta Platforms", 52, 567.80, "buy"));
 
 //VENDER ACCIONES
 simulator.AddOrder(new Order("Apple", 40, 250.00, "sell"));
-simulator.AddOrder(new Order("Microsoft", 15, 450.0, "sell"))
+simulator.AddOrder(new Order("Microsoft", 15, 450.00, "sell"));
+simulator.AddOrder(new Order("Activision", 2, 100.00, "sell"));
+simulator.AddOrder(new Order("Alphabet", 5, 175.0, "sell"));
+simulator.AddOrder(new Order("Meta Platforms", 2, 575.00, "sell"));
+
 simulator.ShowTransactionHistory();
 
-//VENTA MAYOR Y MENOR USANDO MONTICULOS
+//MOSTRAR COMPRA MAYOR Y MENOR USANDO MONTICULOS
+simulator.MostrarCompraMayor();
+simulator.MostrarCompraMenor();
+
+//MOSTRAR VENTA MAYOR Y MENOR USANDO MONTICULOS
 simulator.MostrarVentaMayor();
 simulator.MostrarVentaMenor();
-
-//CORREGIR EXCEPCIONES
-//AGREGAR MI PORTAFOLIO DE INVERSIONES PARA VER CUANTAS ACCIONES TENGO Y CUANTO DINERO HE GANADO
-
