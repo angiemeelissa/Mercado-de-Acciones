@@ -1,4 +1,5 @@
-//ANGIE MELISSA SANTIAGO RODRIGUEZ
+//ANGIE MELISSA SANTIAGO RODRIGUEZ - 1555123
+//ESTRUCTURA DE DATOS II
 class Order {
     constructor(
         public company: string,
@@ -253,9 +254,38 @@ class StockMarketSimulator {
             console.log(`Total Ganado: ${transaction.total.toFixed(2)}`);
         });*/
     }
+
+    public MostrarVentaMayor(): void {
+        let maxHeap = new MaxHeap(this.sellOrders.GetQuantity());
+        this.transactionHistory.filter(t => t.type === "sell").forEach(transaction => {
+            maxHeap.Insert(new Order(transaction.company, transaction.quantity, transaction.price, "sell"));
+        });
+
+        let maxVenta = maxHeap.GetMax();
+        console.log("\n--------------------------------------------------");
+        console.log("\nVENTA MAYOR");
+        console.log(`\nCompañía: ${maxVenta.company}`);
+        console.log(`Acciones: ${maxVenta.quantity}`);
+        console.log(`Precio: ${maxVenta.price}`);
+    }
+
+    public MostrarVentaMenor(): void {
+        let minHeap = new MinHeap(this.sellOrders.GetQuantity());
+        this.transactionHistory.filter(t => t.type === "sell").forEach(transaction => {
+            minHeap.Insert(new Order(transaction.company, transaction.quantity, transaction.price, "sell"));
+        });
+
+        let minVenta = minHeap.GetMin();
+        console.log("\n--------------------------------------------------");
+        console.log("\nVENTA MENOR");
+        console.log(`\nCompañía: ${minVenta.company}`);
+        console.log(`Acciones: ${minVenta.quantity}`);
+        console.log(`Precio: ${minVenta.price}`);
+    }
 }
 
 const simulator = new StockMarketSimulator();
+
 //COMPRAR ACCIONES
 simulator.AddOrder(new Order("Apple", 50, 227.50, "buy"));
 simulator.AddOrder(new Order("Microsoft", 30, 431.30, "buy"));
@@ -265,8 +295,13 @@ simulator.AddOrder(new Order("Meta Platforms", 52, 567.80, "buy"));
 
 //VENDER ACCIONES
 simulator.AddOrder(new Order("Apple", 40, 250.00, "sell"));
+simulator.AddOrder(new Order("Microsoft", 15, 450.0, "sell"))
 simulator.ShowTransactionHistory();
 
-//AGREGAR CON EL MAX Y MIN HEAP EN UN APARTADO DIFERENTE CUAL ES LA VENTA MAYOR Y CUAL ES LA VENTA MENOR
+//VENTA MAYOR Y MENOR USANDO MONTICULOS
+simulator.MostrarVentaMayor();
+simulator.MostrarVentaMenor();
+
 //CORREGIR EXCEPCIONES
 //AGREGAR MI PORTAFOLIO DE INVERSIONES PARA VER CUANTAS ACCIONES TENGO Y CUANTO DINERO HE GANADO
+
